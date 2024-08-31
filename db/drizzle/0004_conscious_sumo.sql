@@ -1,0 +1,1 @@
+ALTER TABLE "payment_account" ADD COLUMN "stripe_linked" boolean DEFAULT false;
