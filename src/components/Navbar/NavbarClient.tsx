@@ -9,6 +9,8 @@ import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 import { cn } from "@/lib/utils";
 
+export const revalidate = 0;
+
 export default function NavbarClient() {
   const { data } = useSession();
 
@@ -25,7 +27,10 @@ export default function NavbarClient() {
       </div>
       {data?.user?.role === "Creator" && (
         <Link
-          className={cn(buttonVariants({ variant: "outline" }), "mr-4 text-primary border-primary hover:text-white hover:bg-primary transition-colors")}
+          className={cn(
+            buttonVariants({ variant: "outline" }),
+            "mr-4 text-primary border-primary hover:text-white hover:bg-primary transition-colors"
+          )}
           href="/project/create"
         >
           Create Project

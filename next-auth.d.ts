@@ -2,7 +2,7 @@ import NextAuth, { DefaultSession } from "next-auth";
 import { JWT } from "@auth/core/jwt";
 
 export type ExtendedUser = DefaultSession["user"] & {
-  role: "Creator" | "Supporter" | "Investor";
+  role: "Creator" | "Supporter";
 };
 
 declare module "next-auth" {
@@ -13,6 +13,6 @@ declare module "next-auth" {
 
 declare module "@auth/core/jwt" {
   interface JWT {
-    role: "Creator" | "Supporter" | "Investor";
+    role: "Creator" | "Supporter";
   }
 }

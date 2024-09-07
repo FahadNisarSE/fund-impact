@@ -27,6 +27,7 @@ export async function POST(
       return Response.json({ data: null, message: "User not found." });
     }
   } catch (error) {
+    console.log("ERror while geetting user: ", error);
     return Response.json({ data: null, message: "Internal server error." });
   }
 }

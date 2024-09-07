@@ -158,3 +158,10 @@ export type TCompleteProjectPayload = {
   projectFund: TProjectFundSchema;
   projectDuration: TProjectDurationSchema;
 };
+
+export const projectCommentSchema = z.object({
+  projectId: z.string().uuid("Invalid UUID format."),
+  comment: z.string().min(1, "Comment cannot be empty."),
+});
+
+export type TProjectCommentSchema = z.infer<typeof projectCommentSchema>;

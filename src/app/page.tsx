@@ -4,16 +4,27 @@ import { borel } from "./layout";
 import LatestProject from "@/components/Home/LatestProject";
 import styles from "@/constant/style";
 import CreateProjectCTA from "@/components/Home/CreateProjectCTA";
+import LatestPosts from "@/components/Home/LatestPosts";
+import { posts, project } from "../../db/types";
+
+export const revalidate = 60;
 
 export default async function Home() {
-  const response = await fetch(
-    process.env.URL + "/api/project/latest?limit=10",
-    {
-      method: "GET",
-    }
-  );
+  const promise1 = fetch(process.env.URL + "/api/project/latest?limit=10");
+  const promise2 = fetch(process.env.URL + "/api/post/latest?limit=10");
 
-  const project = await response.json();
+  const [response1, response2] = await Promise.all([promise1, promise2]);
+
+  const projects = (await response1.json()) as {
+    code: number;
+    message: string;
+    data: project[];
+  };
+  const _posts = (await response2.json()) as {
+    code: number;
+    message: string;
+    data: posts[];
+  };
 
   return (
     <main className={styles.pageContainer}>
@@ -41,9 +52,21 @@ export default async function Home() {
             View More
           </Link>
         </div>
-        <LatestProject payload={project.data} />
+        <LatestProject payload={projects.data} />
       </section>
       <CreateProjectCTA />
+      <section className="grid gap-5 mt-16">
+        <div className="flex flex-row items-center justify-between">
+          <h3 className={`${borel.className} text-3xl`}>Latest Posts</h3>
+          <Link
+            className="text-primary hover:underline underline-offset-2"
+            href={"/"}
+          >
+            View More
+          </Link>
+        </div>
+        <LatestPosts payload={_posts.data} />
+      </section>
     </main>
   );
 }

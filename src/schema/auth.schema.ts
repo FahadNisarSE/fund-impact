@@ -7,7 +7,6 @@ const invalidTypeErrorMessage = "Invalid format.";
 export enum UserRole {
   Creator = "Creator",
   Supporter = "Supporter",
-  Investor = "Investor",
 }
 
 export const userSignUpSchema = z.object({

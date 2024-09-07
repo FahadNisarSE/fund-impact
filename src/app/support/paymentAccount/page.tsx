@@ -2,7 +2,8 @@ import { auth } from "@/../auth";
 import {
   createPaymentAccount,
   createStripeAccountLink,
-  paymentAccountExists
+  getStripeDashboardLink,
+  paymentAccountExists,
 } from "@/action/stripe/stripe";
 import { Button } from "@/components/ui/button";
 import styles from "@/constant/style";
@@ -34,8 +35,8 @@ export default async function PaymentAccount() {
           className="max-w-[250px] w-full object-contain"
         />
         {paymentAccount?.stripeLinked ? (
-          <form>
-            <Button size={"lg"}>Update your Payment Account</Button>
+          <form action={getStripeDashboardLink}>
+            <Button size={"lg"}>Stripe Dashboard</Button>
           </form>
         ) : (
           <form action={createStripeAccountLink}>

@@ -1,6 +1,6 @@
-import { InferSelectModel, eq } from "drizzle-orm";
+import { InferSelectModel, count, eq } from "drizzle-orm";
 
-import { users } from "../../db/schema";
+import { posts, projects, support, users } from "../../db/schema";
 import { db } from "../../db/db";
 
 export const getUserByEmail = async (email: string) => {
@@ -22,6 +22,33 @@ export const getUserById = async (id: string) => {
   } catch (error) {
     return null;
   }
+};
+
+export const getUsersSupport = async (id: string) => {
+  const supportCount = await db
+    .select({ count: count() })
+    .from(support)
+    .where(eq(support.userId, id));
+
+  return supportCount[0].count;
+};
+
+export const getUserProjectandPosts = async (id: string) => {
+  const promise1 = db
+    .select({ count: count() })
+    .from(projects)
+    .where(eq(projects.user_id, id));
+  const promise2 = db
+    .select({ count: count() })
+    .from(posts)
+    .where(eq(posts.userId, id));
+
+  const [projectArray, postsArray] = await Promise.all([promise1, promise2]);
+
+  return {
+    projects: projectArray[0].count,
+    posts: postsArray[0].count,
+  };
 };
 
 export const updateUserEmailStatus = async (id: string) => {

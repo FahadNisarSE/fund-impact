@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { auth } from "@/../auth";
-import { createPost } from "@/model/post";
+import { createPost } from "@/model/posts";
 import { postServerSchema } from "@/schema/post.schema.server";
 
 export async function POST(req: Request) {
@@ -18,10 +18,10 @@ export async function POST(req: Request) {
 
   try {
     const parsedData = await postServerSchema.parseAsync(payload);
-    await createPost({ ...parsedData, userId: session.user.id });
+    const post = await createPost({ ...parsedData, userId: session.user.id });
 
     return Response.json(
-      { data: null, message: "Post created successfully!", code: 201 },
+      { data: post, message: "Post created successfully!", code: 201 },
       { status: 201 }
     );
   } catch (error) {

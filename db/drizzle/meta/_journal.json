@@ -43,6 +43,20 @@
       "when": 1724089586002,
       "tag": "0005_gifted_preak",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1725107374487,
+      "tag": "0006_daily_james_howlett",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1725107562252,
+      "tag": "0007_cold_adam_warlock",
+      "breakpoints": true
     }
   ]
 }

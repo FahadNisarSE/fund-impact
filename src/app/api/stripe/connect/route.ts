@@ -1,8 +1,10 @@
 import stripe from "@/lib/stripe";
 import { headers } from "next/headers";
-import { db } from "@/../../db/db"
+import { db } from "@/../../db/db";
 import { paymentAccount } from "@/../../db/schema";
 import { eq } from "drizzle-orm";
+import Stripe from "stripe";
+import { addSupport, updateSupport } from "@/model/project";
 
 const STRIPE_CONNECT_WEBHOOK_SECRET = process.env
   .STRIPE_CONNECT_WEBHOOK_SECRET as string;
@@ -47,6 +49,20 @@ export async function POST(req: Request) {
               : true,
         })
         .where(eq(paymentAccount.stripeAccountId, payment_Account.id));
+      break;
+    }
+    case "checkout.session.completed": {
+      const session = event.data.object as Stripe.Checkout.Session;
+
+      console.log("Session: ", session);
+
+      if (session.id) {
+        try {
+          await updateSupport(session.id);
+        } catch (error) {
+          console.error("Error updating project support status:", error);
+        }
+      }
       break;
     }
     default: {

@@ -1,13 +1,10 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import { compare } from "bcryptjs";
-import NextAuth from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Google from "next-auth/providers/google";
 
-import {
-  createPaymentAccount,
-  paymentAccountExists,
-} from "@/action/stripe/stripe";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+
 import {
   getUserByEmail,
   getUserById,
@@ -15,6 +12,10 @@ import {
 } from "@/model/user";
 import { loginUserSchema } from "@/schema/auth.schema";
 import { db } from "./db/db";
+
+class InvalidLoginError extends CredentialsSignin {
+  code = "InvalidLoginError";
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: {
@@ -28,19 +29,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   },
   callbacks: {
     async signIn({ user, account }) {
-      const exisitingUser = await getUserById(user?.id!);
+      const provider = account?.provider as string;
+      if (["credentials", "http-email"].includes(provider)) {
+        if (!user?.id) return false;
 
-      // Prevent signin without email verification
-      if (account?.provider === "credentials") {
-        if (!exisitingUser?.emailVerified) return false;
-        else return true;
-      }
+        const existingUser = await getUserById(user.id);
 
-      // In case of google auth if user with password exists then
-      // google oAuth should not work
-      if (account?.type === "oauth") {
-        if (exisitingUser?.password) return false;
-        else return true;
+        if (!existingUser) return "/auth/signup";
+
+        if (provider === "credentials" && existingUser.emailVerified) {
+          return true;
+        }
+
+        return false;
       }
 
       return true;
@@ -51,7 +52,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
 
       if (token.role && session.user) {
-        session.user.role = token.role as "Creator" | "Supporter" | "Investor";
+        session.user.role = token.role as "Creator" | "Supporter";
       }
       return session;
     },
@@ -82,14 +83,19 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
 
           const user = await getUserByEmail(email);
 
-          if (!user || !user.password) return null;
+          if (!user || !user.password) {
+            throw new InvalidLoginError("Invalid email or password");
+          }
 
           const passwordMatch = await compare(password, user.password);
 
-          if (passwordMatch) return user;
+          if (passwordMatch) {
+            console.log("Authorization successful for user:", user.id);
+            return user;
+          }
         }
 
-        return null;
+        throw new InvalidLoginError("Invalid email or password.");
       },
     }),
   ],

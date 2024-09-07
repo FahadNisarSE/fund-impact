@@ -1,0 +1,3 @@
+"C:\Users\PMLS\Downloads\Compressed\stripe_1.21.2_windows_x86_64\stripe.exe" login
+
+C:\Users\PMLS\Downloads\Compressed\stripe_1.21.2_windows_x86_64\stripe.exe" listen --forward-to localhost:3000/api/stripe/connect --forward-connect-to localhost:3000/api/

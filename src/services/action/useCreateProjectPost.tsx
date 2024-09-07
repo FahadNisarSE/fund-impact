@@ -1,5 +1,6 @@
 import { TPostClientSchema } from "@/schema/post.schema.client";
 import { useMutation } from "@tanstack/react-query";
+import { posts } from "../../../db/types";
 
 // Function to delete an image
 async function deleteImage(image: string) {
@@ -59,7 +60,7 @@ async function createNewProject(param: {
     throw new Error(postResponse.message || "Post creation failed.");
   }
 
-  return postResponse;
+  return postResponse.data as posts;
 }
 
 export default function useCreateProjectPost() {

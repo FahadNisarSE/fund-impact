@@ -1,48 +1,44 @@
-"use client";
-
-import { IoIosWarning } from "react-icons/io";
 import Image from "next/image";
+import { IoIosWarning } from "react-icons/io";
 
-import { useGetUserById } from "@/services/query/useGetUserById";
-import { Skeleton } from "../ui/skeleton";
+import { project, user } from "../../../db/types";
+import ProjectSupport from "./ProjectSupport";
 
-export default function ProjectUserInfo({ userId }: { userId: string }) {
-  const { data, isLoading, error } = useGetUserById(userId);
-
-  if (isLoading) {
-    return (
-      <div className="flex items-center gap-4">
-        <Skeleton className="w-16 h-16 rounded-full" />
-        <div>
-          <Skeleton className="w-48 h-5 rounded-md" />
-          <Skeleton className="w-40 h-4 rounded-md mt-2" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!data || error) {
+export default function ProjectUserInfo({
+  userId,
+  user,
+  project,
+}: {
+  userId: string;
+  user: user | null;
+  project: project;
+}) {
+  if (!user) {
     return (
       <div className="flex items-center gap-4 text-destructive">
         <IoIosWarning className="w-16 h-16" />
-        <p className="text-base">{error?.message ?? "Somehting went wrong!"}</p>
+        <p className="text-base">{"Somehting went wrong!"}</p>
       </div>
     );
   }
 
   return (
-    <div className="flex items-center gap-4">
+    <div className="flex items-center gap-4 h-fit">
       <Image
-        src={data.image!}
+        src={user.image ?? "/user.png"}
         width={56}
         height={56}
-        alt={data.name ?? "user image"}
-        className="w-16 h-16 rounded-full"
+        alt={user.name ?? "user image"}
+        className="w-16 h-16 rounded-full object-cover"
       />
-      <div>
-        <h3 className="text-lg font-semibold">{data.name}</h3>
-        <p className="text-sm text-gray-700">{data.userRole}</p>
+      <div className="mr-auto">
+        <h3 className="text-lg font-semibold">{user.name}</h3>
+        <p className="text-sm text-gray-700">
+          Created At:{" "}
+          {project.createdAt && new Date(project.createdAt).toDateString()}
+        </p>
       </div>
+      <ProjectSupport projectId={project.projectId!} />
     </div>
   );
 }

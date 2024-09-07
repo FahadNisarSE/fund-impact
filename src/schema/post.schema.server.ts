@@ -22,3 +22,10 @@ export const postServerSchema = z.object({
 });
 
 export type TPostServerSchema = z.infer<typeof postServerSchema>;
+
+export const postCommentSchema = z.object({
+  postId: z.string().uuid("Invalid UUID format."),
+  comment: z.string().min(1, "Comment cannot be empty."),
+});
+
+export type TPostCommentSchema = z.infer<typeof postCommentSchema>;

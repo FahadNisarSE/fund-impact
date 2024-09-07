@@ -26,7 +26,8 @@ import {
 } from "@/schema/post.schema.client";
 import useCreateProjectPost from "@/services/action/useCreateProjectPost";
 import useGetProjectById from "@/services/query/useGetProjectById";
-import { useParams } from "next/navigation";
+import { useParams, usePathname, useRouter } from "next/navigation";
+import Loader from "@/components/Loader";
 
 export default function ProjectPost() {
   const [postImage, setPostImage] = useState<File>();
@@ -39,6 +40,7 @@ export default function ProjectPost() {
     isPending,
     error: postError,
   } = useCreateProjectPost();
+  const router = useRouter();
 
   const form = useForm<TPostClientSchema>({
     resolver: zodResolver(postClientSchema),
@@ -74,6 +76,18 @@ export default function ProjectPost() {
             id: "POST_ERROR",
           });
         },
+        onSuccess: (data) => {
+          toast.success("Post Uploaded!", {
+            description: "Post uploaded successfully.",
+            action: {
+              label: "Close",
+              onClick: () => toast.dismiss("POST_SUCCESS"),
+            },
+            duration: 10000,
+            id: "POST_SUCCESS",
+          });
+          router.push(`/post/${data.postId}`);
+        },
       }
     );
   }
@@ -87,7 +101,7 @@ export default function ProjectPost() {
             alt="Project Image"
             width={500}
             height={700}
-            className="rounded-xl object-cover max-h-[570px]"
+            className="rounded-xl max-h-[570px] object-cover"
           />
           <span
             onClick={() => {
@@ -177,12 +191,12 @@ export default function ProjectPost() {
                 height={150}
                 src={data.image}
                 alt={data.title}
-                className="w-[150px] h-[150px] rounded-md"
+                className="w-[150px] h-[150px] rounded-md object-cover"
               />
             </div>
             <div className="flex-1">
               <h3 className="text-xl font-bold">{data.title}</h3>
-              <p className="mt-4 text-foreground text-sm">
+              <p className="mt-4 text-foreground text-sm text-gray-700 font-light leading-relaxed text-pretty">
                 {data.description.length > 200
                   ? data.description.slice(0, 200) + "..."
                   : data.description}
@@ -240,7 +254,7 @@ export default function ProjectPost() {
               )}
             />
             <Button className="mt-auto" disabled={form.formState.isLoading}>
-              Submit Post
+              {isPending ? <Loader /> : "Submit Post"}
             </Button>
           </form>
         </Form>

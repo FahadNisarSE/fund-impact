@@ -1,5 +1,5 @@
-import { v4 as uuidv4 } from "uuid";
 import { eq } from "drizzle-orm";
+import { v4 as uuidv4 } from "uuid";
 
 import { db } from "@/../db/db";
 import { passwordResetToken, verificationToken } from "../../db/schema";
@@ -24,7 +24,7 @@ export const updateVerificationToken = async (
   expires: Date
 ) => {
   try {
-    return await db
+    const result = await db
       .update(verificationToken)
       .set({
         token,
@@ -32,6 +32,8 @@ export const updateVerificationToken = async (
       })
       .where(eq(verificationToken.email, email))
       .returning();
+
+    if (result.length) return result[0];
   } catch (error) {
     return null;
   }
@@ -44,7 +46,7 @@ export const createVerificationToken = async (
   expires: Date
 ) => {
   try {
-    return await db
+    const result = await db
       .insert(verificationToken)
       .values({
         userId: id,
@@ -53,6 +55,8 @@ export const createVerificationToken = async (
         expires,
       })
       .returning();
+
+    if (result.length) return result[0];
   } catch (error) {
     console.log("Error: ", error);
     return null;

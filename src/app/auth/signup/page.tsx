@@ -32,24 +32,26 @@ import {
 } from "@/schema/auth.schema";
 import useSignUp from "@/services/action/useSignUp";
 import { DEFAULT_LOGIN_REDIRECT } from "../../../../route";
+import { useRouter } from "next/navigation";
 
 export default function SignUp() {
   const { mutate, isPending, isSuccess, error } = useSignUp();
+  const router = useRouter();
   const form = useForm<TUserSignUpSchema>({
     resolver: zodResolver(userSignUpSchema),
     defaultValues: {
       email: "",
       password: "",
       name: "",
-      userRole: UserRole.Creator,
+      userRole: UserRole.Supporter,
     },
   });
 
   async function onSubmit(values: TUserSignUpSchema) {
     mutate(values, {
       onSuccess: (data) => {
-        window.location.href = "/profile";
-      },
+        console.log("Sign up successfull!",)
+      }
     });
   }
 
@@ -116,7 +118,7 @@ export default function SignUp() {
                   name="userRole"
                   render={({ field }) => (
                     <FormItem className="grid gap-2">
-                    <FormLabel>Account Type</FormLabel>
+                      <FormLabel>Account Type</FormLabel>
                       <Select
                         onValueChange={field.onChange}
                         defaultValue={field.value}
@@ -131,7 +133,6 @@ export default function SignUp() {
                         <SelectContent>
                           <SelectItem value="Creator">Creator</SelectItem>
                           <SelectItem value="Supporter">Supporter</SelectItem>
-                          <SelectItem value="Investor">Investor</SelectItem>
                         </SelectContent>
                       </Select>
                       <FormMessage />
@@ -143,7 +144,7 @@ export default function SignUp() {
                 <SuccessCard
                   message={
                     isSuccess
-                      ? "You have successfully registered you account."
+                      ? "We have a verfication email to you. Please verify email to siginin."
                       : ""
                   }
                 />

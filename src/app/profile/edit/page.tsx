@@ -2,17 +2,17 @@
 
 import { TProfileSchema, profileSchema } from "@/schema/profile.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { CalendarIcon } from "@radix-ui/react-icons";
 import { format } from "date-fns";
+import { useSession } from "next-auth/react";
 import Image from "next/image";
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { CiImageOff } from "react-icons/ci";
-import { LuImagePlus } from "react-icons/lu";
-import { CalendarIcon } from "@radix-ui/react-icons";
-import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { FiUser } from "react-icons/fi";
 import { ImSpinner8 } from "react-icons/im";
+import { LuImagePlus } from "react-icons/lu";
 
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
@@ -35,6 +35,16 @@ import style from "@/constant/style";
 import useUpdateProfile from "@/services/action/useUpdateProfile";
 import { useGetUserById } from "@/services/query/useGetUserById";
 import { queryClient } from "@/utils/Providers";
+import { UserRole } from "@/schema/auth.schema";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export default function EditProfile() {
   const { data: session } = useSession();
@@ -42,6 +52,7 @@ export default function EditProfile() {
     session?.user.id
   );
   const { mutate, isPending } = useUpdateProfile();
+  const router = useRouter();
 
   const [profileImage, setprofileImage] = useState<File>();
   const form = useForm<TProfileSchema>({
@@ -52,11 +63,11 @@ export default function EditProfile() {
       bio: "",
       dateOfBirth: new Date(),
       image: "",
+      userRole: UserRole.Supporter,
     },
     reValidateMode: "onSubmit",
   });
 
-  // Fillout the form values after fetching user details from backend
   useEffect(() => {
     if (isSuccess && data) {
       form.reset({
@@ -65,6 +76,8 @@ export default function EditProfile() {
         bio: data?.bio ?? "",
         dateOfBirth: data.dateOfBirth ?? new Date(),
         image: data?.image ?? "",
+        userRole:
+          data.userRole === "Creator" ? UserRole.Creator : UserRole.Supporter,
       });
     }
   }, [isSuccess]);
@@ -82,9 +95,20 @@ export default function EditProfile() {
           });
           refetch();
           setprofileImage(undefined);
+          router.push("/profile");
         },
         onError: (error) => {
-          console.log("Error: ", error);
+          toast.error("Something went wrong", {
+            description:
+              error.message ??
+              "We aplogize for inconvinence. Please try again.",
+            action: {
+              label: "Close",
+              onClick: () => toast.dismiss("TOAST_PROFILE_ERROR"),
+            },
+            duration: 10000,
+            id: "TOAST_PROFILE_ERROR",
+          });
         },
       }
     );
@@ -262,9 +286,36 @@ export default function EditProfile() {
                     <Textarea
                       disabled={isPending}
                       {...field}
+                      className="min-h-40"
                       placeholder="Enter you bio"
                     />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="userRole"
+              render={({ field }) => (
+                <FormItem className="grid gap-2">
+                  <FormLabel>Account Type</FormLabel>
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                    disabled={isPending}
+                    {...field}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select an account type" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="Creator">Creator</SelectItem>
+                      <SelectItem value="Supporter">Supporter</SelectItem>
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}

@@ -32,7 +32,7 @@ export default function LatestProject({ payload }: { payload: project[] }) {
     <Carousel>
       <CarouselContent>
         {data.map((project) => (
-          <CarouselItem className="basis-1/3">
+          <CarouselItem className="basis-1/3" key={project.projectId}>
             <div className="rounded-2xl overflow-hidden group relative select-none">
               <Image
                 src={project.image}

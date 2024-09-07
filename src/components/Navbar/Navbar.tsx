@@ -6,6 +6,8 @@ import NavbarClient from "./NavbarClient";
 
 type item = { href: string; title: string; disabled: boolean }[];
 
+export const revalidate = 0;
+
 export default async function Navbar() {
   const session = await auth();
   let items: item = [];

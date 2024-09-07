@@ -13,11 +13,7 @@ import {
 } from "drizzle-orm/pg-core";
 import type { AdapterAccount } from "next-auth/adapters";
 
-export const userTypeEnum = pgEnum("userRole", [
-  "Creator",
-  "Supporter",
-  "Investor",
-]);
+export const userTypeEnum = pgEnum("userRole", ["Creator", "Supporter"]);
 
 export const projectCategory = pgEnum("projectCategory", [
   "Art",
@@ -44,7 +40,7 @@ export const users = pgTable("user", {
   email: text("email").notNull(),
   password: text("password"),
   emailVerified: timestamp("emailVerified", { mode: "date" }),
-  userRole: userTypeEnum("user_type").default("Creator").notNull(),
+  userRole: userTypeEnum("user_type").default("Supporter").notNull(),
   image: text("image"),
   dateOfBirth: timestamp("dateOfBirth", { mode: "date" }),
   bio: text("bio"),
@@ -165,7 +161,9 @@ export const likes = pgTable("likes", {
 
 // Support Table
 export const support = pgTable("support", {
+  stripeSessionId: text("stripe_session_id").notNull(),
   supportId: uuid("support_id").defaultRandom().primaryKey(),
+  verified: boolean("verified").default(false),
   projectId: uuid("project_id")
     .notNull()
     .references(() => projects.projectId),
@@ -198,8 +196,23 @@ export const posts = pgTable("posts", {
 });
 
 // -- PostLikes Table
-export const postLikes = pgTable("PostTable", {
+export const postLikes = pgTable("post_likes", {
   postLikeId: uuid("post_like_id").defaultRandom().primaryKey(),
+  postId: uuid("post_id")
+    .notNull()
+    .references(() => posts.postId),
+  userId: text("user_id")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("created_at").defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdateFn(() => new Date()),
+});
+
+// -- Post_comment Table
+export const postComments = pgTable("post_comments", {
+  postCommentId: uuid("post_comment_id").defaultRandom().primaryKey(),
   postId: uuid("post_id")
     .notNull()
     .references(() => posts.postId),
@@ -220,7 +233,9 @@ export const paymentAccount = pgTable("payment_account", {
     .unique()
     .notNull()
     .references(() => users.id),
-  stripeAccountId: varchar("stripe_account_id", { length: 255 }).notNull().unique(),
+  stripeAccountId: varchar("stripe_account_id", { length: 255 })
+    .notNull()
+    .unique(),
   stripeLinked: boolean("stripe_linked").default(false),
   createAt: timestamp("created_at").defaultNow(),
   updateAt: timestamp("updated_at")

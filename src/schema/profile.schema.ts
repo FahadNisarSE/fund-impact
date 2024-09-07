@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+export enum UserRole {
+  Creator = "Creator",
+  Supporter = "Supporter",
+}
+
 export const profileSchema = z.object({
   name: z.string({
     required_error: "Name is required",
@@ -16,6 +21,9 @@ export const profileSchema = z.object({
   }),
   bio: z.string({
     required_error: "User Bio is required.",
+  }),
+  userRole: z.nativeEnum(UserRole, {
+    required_error: `User Role is required`,
   }),
 });
 
@@ -39,6 +47,9 @@ export const profileSchemaApi = z.object({
   }),
   bio: z.string({
     required_error: "User Bio is required.",
+  }),
+    userRole: z.nativeEnum(UserRole, {
+    required_error: `User Role is required`,
   }),
 });
 

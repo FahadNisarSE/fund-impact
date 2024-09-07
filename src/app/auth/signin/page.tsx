@@ -3,8 +3,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import Image from "next/image";
 import Link from "next/link";
-import { useForm } from "react-hook-form";
 import { useState } from "react";
+import { useForm } from "react-hook-form";
 
 import ErrorCard from "@/components/ErrorCard";
 import SuccessCard from "@/components/SuccessCard";
@@ -24,7 +24,8 @@ import { signIn } from "next-auth/react";
 import { DEFAULT_LOGIN_REDIRECT } from "../../../../route";
 
 export default function SignIn() {
-  const { mutate, isPending, isSuccess, error } = useSignIn();
+  const { mutate, isPending, error } = useSignIn();
+  const [isUnverified, setIsUnverified] = useState(false);
   const form = useForm<TloginUserSchema>({
     resolver: zodResolver(loginUserSchema),
     defaultValues: {
@@ -39,8 +40,11 @@ export default function SignIn() {
       { email, password },
       {
         onSuccess: (data) => {
-          console.log("Data: ", data)
-          window.location.href = "/";
+          if (data?.type && data.type === "UNVERIFIED") {
+            setIsUnverified(true);
+          } else {
+            window.location.href = "/profile";
+          }
         },
       }
     );
@@ -113,7 +117,11 @@ export default function SignIn() {
                 />
                 <ErrorCard message={error?.message} />
                 <SuccessCard
-                  message={isSuccess ? "You have successfully logged in." : ""}
+                  message={
+                    isUnverified
+                      ? "We have sent an verification email. Please verifiy your email."
+                      : ""
+                  }
                 />
                 <Button disabled={isPending} type="submit">
                   Sign in

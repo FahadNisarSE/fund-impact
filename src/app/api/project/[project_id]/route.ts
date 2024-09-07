@@ -20,7 +20,8 @@ export async function GET(
       {
         data: null,
         code: 400,
-        message: "Project ID is missing or invalid. Please provide a valid project ID.",
+        message:
+          "Project ID is missing or invalid. Please provide a valid project ID.",
       },
       { status: 400 }
     );
@@ -32,7 +33,8 @@ export async function GET(
       {
         data: null,
         code: 400,
-        message: "The provided project ID is not a valid UUID. Please check the ID and try again.",
+        message:
+          "The provided project ID is not a valid UUID. Please check the ID and try again.",
       },
       { status: 400 }
     );
@@ -48,7 +50,7 @@ export async function GET(
         {
           data: project,
           code: 200,
-          message: "Project successfully retrieved.",
+          message: "Project retrieved successfully.",
         },
         {
           status: 200,
@@ -59,7 +61,8 @@ export async function GET(
         {
           data: null,
           code: 404,
-          message: "Project not found. Please ensure the project ID is correct.",
+          message:
+            "Project not found. Please ensure the project ID is correct.",
         },
         {
           status: 404,
@@ -72,7 +75,8 @@ export async function GET(
       {
         data: null,
         code: 500,
-        message: "An error occurred while retrieving the project. Please try again later.",
+        message:
+          "An error occurred while retrieving the project. Please try again later.",
       },
       { status: 500 }
     );

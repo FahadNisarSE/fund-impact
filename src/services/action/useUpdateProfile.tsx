@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import axios from "axios";
 
 import { TProfileSchema } from "@/schema/profile.schema";
-import { PutBlobResult } from "@vercel/blob";
 
 export async function updateProfile({
   payload,

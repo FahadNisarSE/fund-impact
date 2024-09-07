@@ -1,18 +1,10 @@
-import { signInAction } from "@/action/auth/signIn";
-import { TloginUserSchema } from "@/schema/auth.schema";
 import { useMutation } from "@tanstack/react-query";
 
-async function signIn(data: TloginUserSchema) {
-  const result = await signInAction(data);
-
-  if (result.error) {
-    throw new Error(result.error);
-  } else return result.success;
-}
+import { signInAction } from "@/action/auth/signIn";
 
 export default function useSignIn() {
   return useMutation({
     mutationKey: ["sign_in"],
-    mutationFn: signIn,
+    mutationFn: signInAction,
   });
 }
