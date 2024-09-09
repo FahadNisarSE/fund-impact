@@ -56,8 +56,8 @@ export async function AddSupport({
       },
     },
 
-    success_url: `http://localhost:3000/support/success?projectId=${project.projectId}&amount=${supportAmount}`, // Redirect URL on successful payment
-    cancel_url: "http://localhost:3000/support/error", // Redirect URL on payment cancellation
+    success_url: `${process.env.URL}/support/success?projectId=${project.projectId}&amount=${supportAmount}`, // Redirect URL on successful payment
+    cancel_url: `${process.env.URL}/support/error`, // Redirect URL on payment cancellation
   });
 
   await addSupport(

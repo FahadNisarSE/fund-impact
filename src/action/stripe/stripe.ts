@@ -56,8 +56,8 @@ export async function createStripeAccountLink() {
   if (paymentAccount) {
     const accountLink = await stripe.accountLinks.create({
       account: paymentAccount?.stripeAccountId,
-      refresh_url: "http://localhost:3000/support/paymentAccount?refresh=true",
-      return_url: "http://localhost:3000/support/paymentAccount?linked=true",
+      refresh_url: `${process.env.URL}/support/paymentAccount?refresh=true`,
+      return_url: `${process.env.URL}/support/paymentAccount?linked=true`,
       type: "account_onboarding",
     });
 
