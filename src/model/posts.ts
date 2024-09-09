@@ -2,7 +2,6 @@ import { InferInsertModel, and, count, desc, eq, ne } from "drizzle-orm";
 
 import { db } from "../../db/db";
 import {
-  likes,
   postComments,
   postLikes,
   posts,
@@ -42,6 +41,23 @@ export async function getLatestPosts(limit: number) {
     .limit(limit);
 
   return result;
+}
+
+export async function getLatestPostsWithPagination(
+  limit: string,
+  page: string
+) {
+  const offset = (Number(page) - 1) * Number(limit);
+
+  const postArray = await db
+    .select()
+    .from(posts)
+    .orderBy(desc(posts.createdAt))
+    .limit(Number(limit))
+    .offset(offset)
+    .innerJoin(users, eq(posts.userId, users.id));
+
+  return postArray;
 }
 
 export async function getPostsExcept(postId: string, limit: number) {

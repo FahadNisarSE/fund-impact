@@ -1,4 +1,4 @@
-import { InferInsertModel, desc, ne, eq, count, like, and } from "drizzle-orm";
+import { InferInsertModel, and, count, desc, eq, ne } from "drizzle-orm";
 
 import { db } from "@/../../db/db";
 import { comments, likes, projects, support, users } from "@/../../db/schema";
@@ -27,6 +27,23 @@ export async function getLatestProject(limit: number) {
     .orderBy(desc(projects.createdAt))
     .limit(limit);
   return project;
+}
+
+export async function getLatestProjectWithPagination(
+  limit: string,
+  page: string
+) {
+  const offset = (Number(page) - 1) * Number(limit);
+
+  const projectsArray = await db
+    .select()
+    .from(projects)
+    .orderBy(desc(projects.createdAt))
+    .limit(Number(limit))
+    .offset(offset)
+    .innerJoin(users, eq(projects.user_id, users.id));
+
+  return projectsArray;
 }
 
 export async function getProjectsByUserId(userId: string) {

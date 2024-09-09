@@ -3,10 +3,10 @@
 import { generatePasswordResetTokens } from "@/model/auth";
 import { getUserByEmail } from "@/model/user";
 import {
-    ResetPasswordSchema,
-    TresetPasswordSchema
+  ResetPasswordSchema,
+  TresetPasswordSchema,
 } from "@/schema/auth.schema";
-import { sendPasswordResetEmail } from "@/model/mail";
+import { sendPasswordResetEmail } from "@/utils/email/transporter";
 
 export default async function resetPassword(values: TresetPasswordSchema) {
   try {

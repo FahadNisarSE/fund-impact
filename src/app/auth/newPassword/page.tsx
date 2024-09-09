@@ -40,7 +40,7 @@ export default function NewPassword() {
       { values, token },
       {
         onSuccess: (data) => {
-          router.push("/auth/signIn");
+          router.push("/auth/signin");
         },
       }
     );
