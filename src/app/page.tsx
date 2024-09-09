@@ -41,7 +41,7 @@ export default async function Home() {
             At Fund Impact, we believe that everyone has the power to make a
             difference. Our platform connects passionate individuals with
             meaningful projects, allowing you to create, support, or donate to
-            initiatives that drive real change. Whether you're launching a
+            initiatives that drive real change. Whether you&apos;re launching a
             community project, supporting a global cause, or just looking to
             make an impact, Fund Impact is your gateway to transforming ideas
             into action.

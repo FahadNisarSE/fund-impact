@@ -32,8 +32,8 @@ export default function Loading() {
           </path>
         </svg>
         <p className="text-center text-muted-foreground">
-          "The only way to discover the limits of the possible is to go beyond
-          them into the impossible." - Arthur C. Clarke
+          &quot;The only way to discover the limits of the possible is to go beyond
+          them into the impossible.&quot; - Arthur C. Clarke
         </p>
       </div>
     </div>

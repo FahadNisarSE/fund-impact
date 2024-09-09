@@ -73,9 +73,7 @@ async function createNewProject(payload: {
   projectFund: Partial<TProjectFundSchema>;
   projectDuration: Partial<TProjectDurationSchema>;
 }) {
-  const imageUrl = await uploadImage(
-    payload.projectBasics.image && payload.projectBasics.image[0]
-  );
+  const imageUrl = await uploadImage(payload.projectBasics.image);
   return saveProject({ ...payload, imageUrl });
 }
 

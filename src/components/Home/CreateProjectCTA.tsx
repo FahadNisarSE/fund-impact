@@ -61,7 +61,7 @@ export default function CreateProjectCTA() {
           Create a project <IoRocketOutline className="w-6 h-6" />
         </button>
         <p className="text-ms text-gray-700">
-          It's free and takes less than a minute
+          It&apos;s free and takes less than a minute
         </p>
       </div>
       {cardData.map((card, index) => (

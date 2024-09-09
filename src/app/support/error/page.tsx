@@ -16,12 +16,12 @@ export default function SupportError() {
       <ErrorCube />
       <h3 className="text-3xl font-semibold mt-10 text-red-500">Payment Failed!</h3>
       <p className="text-center mt-5 text-pretty max-w-md text-gray-600">
-        We're sorry, but something went wrong with your payment. Please try
+        We&apos;re sorry, but something went wrong with your payment. Please try
         again or contact support for assistance.
       </p>
       <p className="text-center mt-1 text-pretty max-w-md text-gray-600">
-        "Every setback is a setup for a comeback. Don't give up—your support is
-        crucial in making a difference."
+        &quot;Every setback is a setup for a comeback. Don&apos;t give up—your support is
+        crucial in making a difference.&quot;
       </p>
 
       <Link href={"/"} className={buttonVariants()}>

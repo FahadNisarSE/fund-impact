@@ -15,9 +15,9 @@ export default function SupportSuccess() {
       <SuccessCube />
       <h3 className="text-3xl font-semibold mt-10">Payment Successful!</h3>
       <p className="text-center text-lg mt-5 text-pretty max-w-md text-gray-600">
-        "Investing in the future is more than just a transaction—it's a
+        &quot;Investing in the future is more than just a transaction—it&apos;s a
         commitment to shaping a better world. Thank you for being part of the
-        change."
+        change.&quot;
       </p>
 
       <Link href={"/"} className={buttonVariants()}>

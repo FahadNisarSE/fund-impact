@@ -63,7 +63,7 @@ export default function Review() {
       <div className="relative col-span-3">
         {projectBasics.image && (
           <img
-            src={URL.createObjectURL(projectBasics.image[0])}
+            src={URL.createObjectURL(projectBasics.image)}
             alt="Project Image"
             width={500}
             height={700}

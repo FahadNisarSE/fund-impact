@@ -127,7 +127,7 @@ export default function ProjectFeed() {
           className="w-1/2 object-contain"
         />
         <h3 className="text-center text-gray-600 text-3xl font-semibold">
-          "No Project Found!"
+          &quot;No Project Found!&quot;
         </h3>
         <Button>Refresh</Button>
       </main>

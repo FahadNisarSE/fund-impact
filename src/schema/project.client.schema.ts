@@ -2,15 +2,14 @@ import { z } from "zod";
 
 export const projectBasicsSchema = z.object({
   image: z
-    .instanceof(FileList)
+    .instanceof(File)
     .refine(
-      (files) =>
-        ["image/jpeg", "image/jpg", "image/png"].includes(files[0].type),
+      (file) => ["image/jpeg", "image/jpg", "image/png"].includes(file.type),
       {
         message: "Only .jpg and .png files are accepted.",
       }
     )
-    .refine((files) => files[0].size <= 5 * 1024 * 1024, {
+    .refine((file) => file.size <= 5 * 1024 * 1024, {
       message: "File size should be more than 5MB.",
     }),
   category: z.enum(

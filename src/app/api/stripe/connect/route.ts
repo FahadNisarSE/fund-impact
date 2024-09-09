@@ -51,20 +51,6 @@ export async function POST(req: Request) {
         .where(eq(paymentAccount.stripeAccountId, payment_Account.id));
       break;
     }
-    case "checkout.session.completed": {
-      const session = event.data.object as Stripe.Checkout.Session;
-
-      console.log("Session: ", session);
-
-      if (session.id) {
-        try {
-          await updateSupport(session.id);
-        } catch (error) {
-          console.error("Error updating project support status:", error);
-        }
-      }
-      break;
-    }
     default: {
       console.log("undandled event");
     }

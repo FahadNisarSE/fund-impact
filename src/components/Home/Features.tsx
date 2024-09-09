@@ -15,7 +15,7 @@ export default function Features() {
         <li className="flex flex-row items-start gap-4">
           <MdOutlineCheckCircleOutline className="min-w-6 min-h-6 mt-1.5" />
           <p className="text-balance leading-loose text-lg">
-            We don't call them "customers" or transactions. They are your{" "}
+            We don&apos;t call them &quot;customers&quot; or transactions. They are your{" "}
             <strong className="text-primary">supporters.</strong>
           </p>
         </li>

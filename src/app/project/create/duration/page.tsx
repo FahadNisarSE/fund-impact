@@ -66,7 +66,7 @@ export default function ProjectDuration() {
               <CardTitle>Launch Date</CardTitle>
               <CardDescription>
                 Select the date when your project is set to launch. The selected
-                date will help determine the timeline for your project's
+                date will help determine the timeline for your project&apos;s
                 milestones and funding period.
               </CardDescription>
             </CardHeader>

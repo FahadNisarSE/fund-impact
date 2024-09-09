@@ -47,8 +47,8 @@ export default function CreateProject() {
 
   function handleImageChange(e: React.ChangeEvent<HTMLInputElement>) {
     if (e.target.files) {
-      form.setValue("image", e.target.files);
-      setProjectImage(form.getValues("image")[0]);
+      form.setValue("image", e.target.files[0]);
+      setProjectImage(form.getValues("image"));
     }
   }
 
