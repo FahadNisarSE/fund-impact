@@ -21,10 +21,6 @@ interface VerificationEmailProps {
   logo?: string;
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "";
-
 export const VerificationEmail = ({
   useremail,
   logo,
@@ -49,13 +45,13 @@ export const VerificationEmail = ({
               />
             </Section>
             <Heading className="text-black text-[24px] font-normal text-center p-0 my-[30px] mx-0">
-              <strong>Dear user</strong>, You're Invited to Join{" "}
+              <strong>Dear user</strong>, You&apos;re Invited to Join{" "}
               <strong>FundImpact</strong>
             </Heading>
 
             <Text className="text-black text-[14px] leading-[24px]">
               FundImpact is a platform dedicated to driving positive change by
-              connecting people with causes that matter. We're thrilled to
+              connecting people with causes that matter. We&apos;re thrilled to
               invite you to be a part of this transformative journey.
             </Text>
 
@@ -84,19 +80,21 @@ export const VerificationEmail = ({
               This invitation is exclusively for{" "}
               <span className="text-black">{useremail}</span>. If you were not
               expecting this invitation, feel free to ignore this email. Should
-              you have any concerns regarding your account's security, please
-              reply to this email to reach our support team.
+              you have any concerns regarding your account&apos;s security,
+              please reply to this email to reach our support team.
             </Text>
 
             <Text className="text-[#666666] text-[12px] leading-[24px] mt-5">
-              <em>"The best way to predict the future is to create it."</em> –
-              Abraham Lincoln
+              <em>
+                &quot;The best way to predict the future is to create it.&quot;
+              </em>{" "}
+              – Abraham Lincoln
             </Text>
 
             <Text className="text-[#666666] text-[12px] leading-[24px] mt-1">
               <em>
-                "Small acts, when multiplied by millions of people, can
-                transform the world."
+                &quot;Small acts, when multiplied by millions of people, can
+                transform the world.&quot;
               </em>{" "}
               - Howard Zinn
             </Text>

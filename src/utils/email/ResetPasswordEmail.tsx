@@ -20,10 +20,6 @@ interface ResetPasswordProps {
   logo?: string;
 }
 
-const baseUrl = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : "";
-
 export const ResetPassword = ({
   useremail,
   logo,
@@ -84,14 +80,16 @@ export const ResetPassword = ({
             </Text>
 
             <Text className="text-[#666666] text-[12px] leading-[24px] mt-5">
-              <em>"The best way to predict the future is to create it."</em> –
-              Abraham Lincoln
+              <em>
+                &quot;The best way to predict the future is to create it.&quot;
+              </em>{" "}
+              – Abraham Lincoln
             </Text>
 
             <Text className="text-[#666666] text-[12px] leading-[24px] mt-1">
               <em>
-                "Small acts, when multiplied by millions of people, can
-                transform the world."
+                &quot;Small acts, when multiplied by millions of people, can
+                transform the world.&quot;
               </em>{" "}
               - Howard Zinn
             </Text>
