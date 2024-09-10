@@ -128,7 +128,7 @@ export default async function Profile() {
           <></>
         )}
       </section>
-      <section className="max-w-2xl mx-auto flex flex-col items-center gap-y-4 mt-10 p-4">
+      <section className="max-w-2xl mx-auto flex flex-col items-center gap-y-4 my-10 p-4">
         <h3 className="text-xl text-center font-semibold text-foreground">
           About You
         </h3>
