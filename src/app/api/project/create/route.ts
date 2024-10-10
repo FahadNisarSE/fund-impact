@@ -5,8 +5,9 @@ import { createProjectModel } from "@/model/project";
 import {
   projectBasicsServerSchema,
   projectDurationServerSchema,
-  projectFundSchema
+  projectFundSchema,
 } from "@/schema/project.schema";
+import moderation from "@/model/moderation";
 
 export async function POST(req: Request) {
   const payload = await req.json();
@@ -42,6 +43,27 @@ export async function POST(req: Request) {
     );
     const projectFund = await projectFundSchema.parseAsync(payload.projectFund);
 
+    try {
+      const result = await moderation(
+        `title: ${projectBasics.title}, subtitle:${projectBasics.subtitle} description: ${projectBasics.description}`
+      );
+      console.log("Moderation Result Server Sider: ", result);
+
+      if (result.results.length) {
+        if (result.results[0].flagged || true) {
+          return Response.json(
+            {
+              data: result.results[0],
+              message:
+                "The post contains content that violates moderation guidelines.",
+              code: 422,
+            },
+            { status: 422 }
+          );
+        }
+      }
+    } catch (error) {}
+
     await createProjectModel({
       category: projectBasics.category,
       description: projectBasics.description,
@@ -60,6 +82,7 @@ export async function POST(req: Request) {
       { status: 201 }
     );
   } catch (error) {
+    console.log("Create Project: ", error);
     if (error instanceof z.ZodError) {
       return Response.json(
         {

@@ -4,6 +4,11 @@ import {
   TProjectFundSchema,
 } from "@/schema/project.schema";
 import { useMutation } from "@tanstack/react-query";
+import { Moderation } from "openai/resources/moderations.mjs";
+
+interface ModerationError extends Error {
+  moderationResults?: Moderation;
+}
 
 // Function to delete an image
 async function deleteImage(image: string) {
@@ -59,9 +64,18 @@ async function saveProject(payload: {
 
   const projectResponse = await response.json();
 
+  console.log("Project Response hook: ", projectResponse);
+
   if (!response.ok) {
     await deleteImage(payload.imageUrl);
-    throw new Error(projectResponse.message || "Project creation failed");
+    const error: ModerationError = new Error(
+      projectResponse.message || "Project creation failed"
+    );
+    if (projectResponse.code === 422) {
+      error.name = "MODERATION";
+      error.moderationResults = projectResponse.data;
+    }
+    throw error;
   }
 
   return projectResponse;

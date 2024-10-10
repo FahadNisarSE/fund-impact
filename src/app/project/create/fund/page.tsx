@@ -28,6 +28,7 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
+import { toast } from "sonner";
 
 export default function FundProject() {
   const router = useRouter();
@@ -51,9 +52,22 @@ export default function FundProject() {
   }
 
   const handleSubmit = (values: TProjectFundSchema) => {
-    setProjectFund(values);
-    setStep("duration");
-    router.push("/project/create/duration");
+    if (data) {
+      setProjectFund(values);
+      setStep("duration");
+      router.push("/project/create/duration");
+    } else {
+      toast.error("Payment Account not found.", {
+        description: "Please link a payment account first to create a project.",
+        richColors: true,
+        action: {
+          label: "Close",
+          onClick: () => toast.dismiss("TOAST_PROFILE_ERROR"),
+        },
+        duration: 10000,
+        id: "TOAST_PROFILE_ERROR",
+      });
+    }
   };
 
   return (

@@ -14,9 +14,12 @@ import {
   DropdownMenuTrigger,
 } from "@radix-ui/react-dropdown-menu";
 import { Button, buttonVariants } from "../ui/button";
+import { getUserById } from "@/model/user";
+import { useGetUserById } from "@/services/query/useGetUserById";
 
 export default function Profile() {
   const { data } = useSession();
+  const { data: user, isLoading, isError } = useGetUserById(data?.user.id);
 
   return data ? (
     <DropdownMenu>
@@ -28,7 +31,7 @@ export default function Profile() {
         >
           {data?.user?.image ? (
             <Image
-              src={data?.user.image}
+              src={user?.image ?? data?.user.image}
               alt="Profile Image"
               width={36}
               height={36}

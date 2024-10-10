@@ -13,6 +13,8 @@ import { Button } from "@/components/ui/button";
 import styles from "@/constant/style";
 import UsersProjects from "@/components/Profile/UsersProject";
 
+export const revalidate = 0;
+
 export default async function Profile() {
   const session = (await auth()) as Session;
 

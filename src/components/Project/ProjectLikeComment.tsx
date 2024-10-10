@@ -72,14 +72,16 @@ export default function ProjectLikeComment({
         )}
       </button>
 
-      <Link
-        href={`/project/${projectId}/post`}
-        className={`px-5 py-4 border-gray-300 ${
-          session.data?.user.id === createdBy ? "block" : "none"
-        } rounded-md border-2 border-dashed flex-1 flex items-center gap-5`}
-      >
-        <IoAdd /> Create a new post
-      </Link>
+      {session.data?.user.id && session.data?.user.id === createdBy && (
+        <Link
+          href={`/project/${projectId}/post`}
+          className={`px-5 py-4 border-gray-300 ${
+            session.data?.user.id === createdBy ? "block" : "none"
+          } rounded-md border-2 border-dashed flex-1 flex items-center gap-5`}
+        >
+          <IoAdd /> Create a new post
+        </Link>
+      )}
 
       <div className="flex flex-col gap-1 w-36 border border-gray-300 rounded-xl py-2 px-5 items-center p-3">
         <MdOutlineComment className="w-5 h-5" />
