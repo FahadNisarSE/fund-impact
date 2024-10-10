@@ -37,6 +37,12 @@ export async function updateProfile({
         image: data.data.url,
       },
     });
+  } else {
+    await axios({
+      url: "/api/users/update",
+      method: "POST",
+      data: payload,
+    });
   }
 }
 

@@ -30,12 +30,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { Textarea } from "@/components/ui/textarea";
-import style from "@/constant/style";
-import useUpdateProfile from "@/services/action/useUpdateProfile";
-import { useGetUserById } from "@/services/query/useGetUserById";
-import { queryClient } from "@/utils/Providers";
-import { UserRole } from "@/schema/auth.schema";
 import {
   Select,
   SelectContent,
@@ -43,6 +37,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
+import style from "@/constant/style";
+import { UserRole } from "@/schema/auth.schema";
+import useUpdateProfile from "@/services/action/useUpdateProfile";
+import { useGetUserById } from "@/services/query/useGetUserById";
+import { queryClient } from "@/utils/Providers";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -69,18 +69,21 @@ export default function EditProfile() {
   });
 
   useEffect(() => {
-    if (isSuccess && data) {
+    if (data) {
+      console.log("before form update: ", { data });
       form.reset({
         name: data?.name ?? "",
         email: data?.email ?? "",
         bio: data?.bio ?? "",
-        dateOfBirth: data.dateOfBirth ?? new Date(),
+        dateOfBirth: data.dateOfBirth ? new Date(data.dateOfBirth) : new Date(),
         image: data?.image ?? "",
         userRole:
-          data.userRole === "Creator" ? UserRole.Creator : UserRole.Supporter,
+          data.userRole === "Supporter" ? UserRole.Supporter : UserRole.Creator,
       });
+
+      console.log("After form update: ", form.getValues());
     }
-  }, [isSuccess]);
+  }, [data]);
 
   async function onSubmit(values: TProfileSchema) {
     mutate(
@@ -89,7 +92,7 @@ export default function EditProfile() {
         image: profileImage,
       },
       {
-        onSuccess: () => {
+        onSuccess: (res) => {
           queryClient.invalidateQueries({
             queryKey: ["get_user_by_id", data?.id],
           });
@@ -302,7 +305,6 @@ export default function EditProfile() {
                   <FormLabel>Account Type</FormLabel>
                   <Select
                     onValueChange={field.onChange}
-                    defaultValue={field.value}
                     disabled={isPending}
                     {...field}
                   >

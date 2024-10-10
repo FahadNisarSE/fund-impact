@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { FaCreditCard } from "react-icons/fa6";
 
+import { Button, buttonVariants } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -20,13 +21,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 import { TProjectFundSchema, projectFundSchema } from "@/schema/project.schema";
-import useProjectStore from "@/utils/store/useCreateProjectStore";
-import { Button, buttonVariants } from "@/components/ui/button";
 import { useGetPaymentAccountByUserId } from "@/services/query/useGetPaymentAccountByUserId";
+import useProjectStore from "@/utils/store/useCreateProjectStore";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -52,7 +52,7 @@ export default function FundProject() {
   }
 
   const handleSubmit = (values: TProjectFundSchema) => {
-    if (data) {
+    if (data?.stripeLinked) {
       setProjectFund(values);
       setStep("duration");
       router.push("/project/create/duration");
