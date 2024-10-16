@@ -7,40 +7,38 @@ import {
   projectDurationServerSchema,
   projectFundSchema,
 } from "@/schema/project.schema";
-import moderation from "@/model/moderation";
-import { Moderation } from "openai/resources/moderations.mjs";
 
 const threshold = 0.4;
 
-function checkCategoriesAndFlag(result: Moderation) {
-  const { categories, category_scores } = result;
-  let anyCategoryFlagged = false;
+// function checkCategoriesAndFlag(result: Moderation) {
+//   const { categories, category_scores } = result;
+//   let anyCategoryFlagged = false;
 
-  for (const category in categories) {
-    if (category_scores[category] >= threshold) {
-      categories[category] = true; // Set category flag to true
-      anyCategoryFlagged = true; // If any category is flagged, mark that a flag was set
-    } else {
-      categories[category] = false; // Set category flag to false if below threshold
-    }
-  }
+//   for (const category in categories) {
+//     if (category_scores[category] >= threshold) {
+//       categories[category] = true; // Set category flag to true
+//       anyCategoryFlagged = true; // If any category is flagged, mark that a flag was set
+//     } else {
+//       categories[category] = false; // Set category flag to false if below threshold
+//     }
+//   }
 
-  result.flagged = anyCategoryFlagged;
+//   result.flagged = anyCategoryFlagged;
 
-  console.log("Result from moderation : ", result);
+//   console.log("Result from moderation : ", result);
 
-  if (result.flagged) {
-    return Response.json(
-      {
-        data: result,
-        message:
-          "The post contains flagged content based on moderation guidelines.",
-        code: 422,
-      },
-      { status: 422 }
-    );
-  }
-}
+//   if (result.flagged) {
+//     return Response.json(
+//       {
+//         data: result,
+//         message:
+//           "The post contains flagged content based on moderation guidelines.",
+//         code: 422,
+//       },
+//       { status: 422 }
+//     );
+//   }
+// }
 
 export async function POST(req: Request) {
   const payload = await req.json();
