@@ -5,7 +5,6 @@ import { Moderation } from "openai/resources/moderations.mjs";
 import { useState } from "react";
 import { FiLoader } from "react-icons/fi";
 import { toast } from "sonner";
-import { RiArrowDropRightLine } from "react-icons/ri";
 
 import {
   AlertDialog,
@@ -26,7 +25,7 @@ export default function Review() {
   const { step, projectBasics, projectFund, projectDuration, reset } =
     useProjectStore();
   const { isPending, mutate, error } = useCreateNewProject();
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [moderation, setModeration] = useState<Moderation>({
     flagged: true,
     categories: {
@@ -57,13 +56,13 @@ export default function Review() {
     },
   });
 
-  // if (step === "basic") {
-  //   router.push("/project/create");
-  // } else if (step === "fund") {
-  //   router.push("/project/create/fund");
-  // } else if (step === "duration") {
-  //   router.push("/project/create/duration");
-  // }
+  if (step === "basic") {
+    router.push("/project/create");
+  } else if (step === "fund") {
+    router.push("/project/create/fund");
+  } else if (step === "duration") {
+    router.push("/project/create/duration");
+  }
 
   async function saveProject() {
     mutate(
@@ -76,6 +75,7 @@ export default function Review() {
         onError: (error) => {
           console.log("On Error Callback: ", error);
           if (error.name === "MODERATION") {
+            console.log("Error: ", error);
             // @ts-ignore
             setModeration(error.moderationResults);
             setOpen(true);

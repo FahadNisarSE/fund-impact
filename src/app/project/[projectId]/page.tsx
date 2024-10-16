@@ -77,7 +77,7 @@ export default async function ProjectDetailScreen({
             height={500}
             className="xl:max-h-none max-h-[300px] object-cover object-center h-full w-full"
           />
-          <div className="p-5">
+          <div className="p-5 overflow-y-scroll">
             <h3 className="text-sm uppercase text-primary font-semibold">
               {project.subtitle}
             </h3>
