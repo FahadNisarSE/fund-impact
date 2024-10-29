@@ -8,7 +8,7 @@ import useGetSupportByUserId from "@/services/query/useGetSupportByUserId";
 
 import { useSession } from "next-auth/react";
 
-export default function page() {
+export default function Supported() {
   const session = useSession();
 
   const { data, isLoading, error, refetch } = useGetSupportByUserId(

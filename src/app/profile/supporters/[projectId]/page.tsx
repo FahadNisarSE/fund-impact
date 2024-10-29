@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import useGetSupportForProject from "@/services/query/useGetSupportForProject";
 
-export default function page({ params }: { params: { projectId: string } }) {
+export default function Supporters({ params }: { params: { projectId: string } }) {
   const { data, isLoading, error, refetch } = useGetSupportForProject(
     params.projectId
   );
