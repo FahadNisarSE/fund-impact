@@ -4,6 +4,44 @@ import { auth } from "@/../auth";
 import { createPost } from "@/model/posts";
 import { postServerSchema } from "@/schema/post.schema.server";
 import moderation from "@/model/moderation";
+import { Moderation } from "openai/resources/index.mjs";
+
+const threshold = 0.05;
+
+function checkCategoriesAndFlag(result: Moderation) {
+  const { categories, category_scores } = result;
+  let anyCategoryFlagged = false;
+
+  for (const category in categories) {
+    // @ts-ignore
+    if (category_scores[category] >= threshold) {
+      // @ts-ignore
+      categories[category] = true;
+      anyCategoryFlagged = true;
+    } else {
+      // @ts-ignore
+      categories[category] = false;
+    }
+  }
+
+  result.flagged = anyCategoryFlagged;
+
+  console.log("Result from moderation : ", result);
+
+  if (result.flagged) {
+    return Response.json(
+      {
+        data: result,
+        message:
+          "The post contains flagged content based on moderation guidelines.",
+        code: 422,
+      },
+      { status: 422 }
+    );
+  }
+
+  return null; // Return null if no flag is raised
+}
 
 export async function POST(req: Request) {
   const payload = await req.json();
@@ -20,27 +58,15 @@ export async function POST(req: Request) {
   try {
     const parsedData = await postServerSchema.parseAsync(payload);
 
-    try {
-      const result = await moderation(
-        `title: ${parsedData.title}, content: ${parsedData.content}`
-      );
+    const result = await moderation(
+      `title: ${parsedData.title}, content: ${parsedData.content}`
+    );
 
-      console.log("Moderation Result Server Sider: ", result);
+    const flaggedResponse = checkCategoriesAndFlag(result.results[0]);
 
-      if (result.results.length) {
-        if (result.results[0].flagged || true) {
-          return Response.json(
-            {
-              data: result.results[0],
-              message:
-                "The post contains content that violates moderation guidelines.",
-              code: 422,
-            },
-            { status: 422 }
-          );
-        }
-      }
-    } catch (error) {}
+    if (flaggedResponse) {
+      return flaggedResponse;
+    }
 
     const post = await createPost({ ...parsedData, userId: session.user.id });
 

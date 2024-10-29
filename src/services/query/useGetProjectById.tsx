@@ -7,7 +7,7 @@ export async function getProjectById(projectId: string) {
   const response = await fetch(`/api/project/${projectId}`, {
     method: "GET",
     next: {
-      revalidate: 10,
+      revalidate: 0,
     },
   });
 

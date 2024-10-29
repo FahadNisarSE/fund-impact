@@ -7,6 +7,7 @@ import { useForm } from "react-hook-form";
 import { FaTrashCan } from "react-icons/fa6";
 import { toast } from "sonner";
 
+import Loader from "@/components/Loader";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -26,8 +27,18 @@ import {
 } from "@/schema/post.schema.client";
 import useCreateProjectPost from "@/services/action/useCreateProjectPost";
 import useGetProjectById from "@/services/query/useGetProjectById";
-import { useParams, usePathname, useRouter } from "next/navigation";
-import Loader from "@/components/Loader";
+import { useParams, useRouter } from "next/navigation";
+import { Moderation } from "openai/resources/moderations.mjs";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export default function ProjectPost() {
   const [postImage, setPostImage] = useState<File>();
@@ -41,6 +52,8 @@ export default function ProjectPost() {
     error: postError,
   } = useCreateProjectPost();
   const router = useRouter();
+  const [open, setOpen] = useState(true);
+  const [moderation, setModeration] = useState<Moderation>();
 
   const form = useForm<TPostClientSchema>({
     resolver: zodResolver(postClientSchema),
@@ -65,6 +78,14 @@ export default function ProjectPost() {
       },
       {
         onError: (error) => {
+          console.log("On Error Callback: ", error);
+          if (error.name === "MODERATION") {
+            console.log("Error: ", error);
+            // @ts-ignore
+            setModeration(error.moderationResults);
+            setOpen(true);
+            return;
+          }
           toast.error("Error!", {
             description:
               error.message ?? "Something went wrong. Please try again.",
@@ -259,6 +280,93 @@ export default function ProjectPost() {
           </form>
         </Form>
       </div>
+      <AlertDialog open={open} onOpenChange={setOpen}>
+        <AlertDialogContent>
+          {moderation ? (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-destructive">
+                  Moderation Alert
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  The post contains content that violates moderation guidelines.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div>
+                <p>
+                  <strong>Flagged Categories:</strong>
+                </p>
+                <ul className="space-y-1 my-2">
+                  {Object.keys(moderation.categories).map(
+                    (category) =>
+                      // @ts-ignore
+                      moderation.categories[category] && (
+                        <li className="capitalize" key={category}>
+                          {category.replace("/", " ")}
+                        </li>
+                      )
+                  )}
+                </ul>
+
+                <p>
+                  <strong>Scores:</strong>
+                </p>
+                <ol className="list-inside list-decimal space-y-1 mt-2">
+                  {Object.keys(moderation.category_scores).map(
+                    (score) =>
+                      // @ts-ignore
+                      moderation.categories[score] && (
+                        <li key={score} className="capitalize">
+                          {score.replace("/", " ")}:{" "}
+                          {
+                            // @ts-ignore
+                            moderation.category_scores[score].toFixed(2)
+                          }
+                        </li>
+                      )
+                  )}
+                </ol>
+              </div>
+            </>
+          ) : (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-destructive">
+                  Moderation Guidelines
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Your project or post follow these guidelines.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="alert alert-warning" role="alert">
+                <h4 className="alert-heading">Important Guidelines!</h4>
+                <p>Your project should adhere to the following guidelines:</p>
+                <ul>
+                  <li>Avoid violence or graphic content.</li>
+                  <li>No harassment or threatening content.</li>
+                  <li>No hate speech or inappropriate language.</li>
+                  <li>No self-harm or dangerous instructions.</li>
+                  <li>Ensure content is respectful and safe for all users.</li>
+                </ul>
+                <hr />
+                <p className="mb-0">
+                  Please review your content before submission to ensure it
+                  aligns with the guidelines.
+                </p>
+              </div>
+            </>
+          )}
+
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setOpen(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => setOpen(false)}>
+              Acknowledge
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </main>
   );
 }

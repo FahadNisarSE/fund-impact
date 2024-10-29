@@ -7,38 +7,45 @@ import {
   projectDurationServerSchema,
   projectFundSchema,
 } from "@/schema/project.schema";
+import { Moderation } from "openai/resources/index.mjs";
+import moderation from "@/model/moderation";
 
-const threshold = 0.4;
+const threshold = 0.05;
 
-// function checkCategoriesAndFlag(result: Moderation) {
-//   const { categories, category_scores } = result;
-//   let anyCategoryFlagged = false;
+function checkCategoriesAndFlag(result: Moderation) {
+  const { categories, category_scores } = result;
+  let anyCategoryFlagged = false;
 
-//   for (const category in categories) {
-//     if (category_scores[category] >= threshold) {
-//       categories[category] = true; // Set category flag to true
-//       anyCategoryFlagged = true; // If any category is flagged, mark that a flag was set
-//     } else {
-//       categories[category] = false; // Set category flag to false if below threshold
-//     }
-//   }
+  for (const category in categories) {
+    // @ts-ignore
+    if (category_scores[category] >= threshold) {
+      // @ts-ignore
+      categories[category] = true;
+      anyCategoryFlagged = true;
+    } else {
+      // @ts-ignore
+      categories[category] = false;
+    }
+  }
 
-//   result.flagged = anyCategoryFlagged;
+  result.flagged = anyCategoryFlagged;
 
-//   console.log("Result from moderation : ", result);
+  console.log("Result from moderation : ", result);
 
-//   if (result.flagged) {
-//     return Response.json(
-//       {
-//         data: result,
-//         message:
-//           "The post contains flagged content based on moderation guidelines.",
-//         code: 422,
-//       },
-//       { status: 422 }
-//     );
-//   }
-// }
+  if (result.flagged) {
+    return Response.json(
+      {
+        data: result,
+        message:
+          "The post contains flagged content based on moderation guidelines.",
+        code: 422,
+      },
+      { status: 422 }
+    );
+  }
+
+  return null; // Return null if no flag is raised
+}
 
 export async function POST(req: Request) {
   const payload = await req.json();
@@ -74,21 +81,23 @@ export async function POST(req: Request) {
     );
     const projectFund = await projectFundSchema.parseAsync(payload.projectFund);
 
-    // try {
-    //   const result = await moderation(
-    //     `title: ${projectBasics.title}, subtitle:${projectBasics.subtitle} description: ${projectBasics.description}`
-    //   );
-    //   console.log("Moderation Result Server Sider: ", {
-    //     result,
-    //     title: projectBasics.title,
-    //     descriptioon: projectBasics.description,
-    //   });
+    const result = await moderation(
+      `title: ${projectBasics.title}, subtitle:${projectBasics.subtitle} description: ${projectBasics.description}`
+    );
 
-    //   if (result.results.length) {
-    //     checkCategoriesAndFlag(result.results[0]);
-    //   }
-    // } catch (error) {}
+    console.log("Moderation Result Server Side: ", {
+      result,
+      title: projectBasics.title,
+      description: projectBasics.description,
+    });
 
+    const flaggedResponse = checkCategoriesAndFlag(result.results[0]);
+
+    if (flaggedResponse) {
+      return flaggedResponse;
+    }
+
+    // Proceed to create the project if moderation passed
     await createProjectModel({
       category: projectBasics.category,
       description: projectBasics.description,

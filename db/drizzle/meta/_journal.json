@@ -57,6 +57,27 @@
       "when": 1725107562252,
       "tag": "0007_cold_adam_warlock",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1730171408409,
+      "tag": "0008_marvelous_sentinel",
+      "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1730171480889,
+      "tag": "0009_same_rocket_raccoon",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1730172668349,
+      "tag": "0010_special_christian_walker",
+      "breakpoints": true
     }
   ]
 }

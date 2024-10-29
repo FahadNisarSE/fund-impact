@@ -58,6 +58,14 @@ export default function Profile() {
             Profile
           </Link>
         </DropdownMenuItem>
+        <DropdownMenuItem>
+          <Link
+            href="/chat"
+            className="cursor-pointer relative flex select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50"
+          >
+            Chat
+          </Link>
+        </DropdownMenuItem>
         <DropdownMenuSeparator className="-mx-1 my-1 h-px bg-muted" />
         <DropdownMenuItem>
           <span

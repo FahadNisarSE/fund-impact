@@ -25,36 +25,8 @@ export default function Review() {
   const { step, projectBasics, projectFund, projectDuration, reset } =
     useProjectStore();
   const { isPending, mutate, error } = useCreateNewProject();
-  const [open, setOpen] = useState(false);
-  const [moderation, setModeration] = useState<Moderation>({
-    flagged: true,
-    categories: {
-      sexual: false,
-      hate: false,
-      harassment: false,
-      "self-harm": false,
-      "sexual/minors": false,
-      "hate/threatening": false,
-      "violence/graphic": false,
-      "self-harm/intent": false,
-      "self-harm/instructions": false,
-      "harassment/threatening": true,
-      violence: true,
-    },
-    category_scores: {
-      sexual: 1.2282071e-6,
-      hate: 0.010696256,
-      harassment: 0.29842457,
-      "self-harm": 1.5236925e-8,
-      "sexual/minors": 5.7246268e-8,
-      "hate/threatening": 0.0060676364,
-      "violence/graphic": 4.435014e-6,
-      "self-harm/intent": 8.098441e-10,
-      "self-harm/instructions": 2.8498655e-11,
-      "harassment/threatening": 0.63055265,
-      violence: 0.99011886,
-    },
-  });
+  const [open, setOpen] = useState(true);
+  const [moderation, setModeration] = useState<Moderation>();
 
   if (step === "basic") {
     router.push("/project/create");
@@ -174,51 +146,81 @@ export default function Review() {
       </div>
       <AlertDialog open={open} onOpenChange={setOpen}>
         <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle className="text-destructive">
-              Moderation Alert
-            </AlertDialogTitle>
-            <AlertDialogDescription>
-              The post contains content that violates moderation guidelines.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          {moderation && (
-            <div>
-              <p>
-                <strong>Flagged Categories:</strong>
-              </p>
-              <ul className="space-y-1 my-2">
-                {Object.keys(moderation.categories).map(
-                  (category) =>
-                    // @ts-ignore
-                    moderation.categories[category] && (
-                      <li className="capitalize" key={category}>
-                        {category.replace("/", " ")}
-                      </li>
-                    )
-                )}
-              </ul>
+          {moderation ? (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-destructive">
+                  Moderation Alert
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  The post contains content that violates moderation guidelines.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div>
+                <p>
+                  <strong>Flagged Categories:</strong>
+                </p>
+                <ul className="space-y-1 my-2">
+                  {Object.keys(moderation.categories).map(
+                    (category) =>
+                      // @ts-ignore
+                      moderation.categories[category] && (
+                        <li className="capitalize" key={category}>
+                          {category.replace("/", " ")}
+                        </li>
+                      )
+                  )}
+                </ul>
 
-              <p>
-                <strong>Scores:</strong>
-              </p>
-              <ol className="list-inside list-decimal space-y-1 mt-2">
-                {Object.keys(moderation.category_scores).map(
-                  (score) =>
-                    // @ts-ignore
-                    moderation.categories[score] && (
-                      <li key={score} className="capitalize">
-                        {score.replace("/", " ")}:{" "}
-                        {
-                          // @ts-ignore
-                          moderation.category_scores[score].toFixed(2)
-                        }
-                      </li>
-                    )
-                )}
-              </ol>
-            </div>
+                <p>
+                  <strong>Scores:</strong>
+                </p>
+                <ol className="list-inside list-decimal space-y-1 mt-2">
+                  {Object.keys(moderation.category_scores).map(
+                    (score) =>
+                      // @ts-ignore
+                      moderation.categories[score] && (
+                        <li key={score} className="capitalize">
+                          {score.replace("/", " ")}:{" "}
+                          {
+                            // @ts-ignore
+                            moderation.category_scores[score].toFixed(2)
+                          }
+                        </li>
+                      )
+                  )}
+                </ol>
+              </div>
+            </>
+          ) : (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle className="text-destructive">
+                  Moderation Guidelines
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  Your project or post follow these guidelines.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="alert alert-warning" role="alert">
+                <h4 className="alert-heading">Important Guidelines!</h4>
+                <p>Your project should adhere to the following guidelines:</p>
+                <ul>
+                  <li>Avoid violence or graphic content.</li>
+                  <li>No harassment or threatening content.</li>
+                  <li>No hate speech or inappropriate language.</li>
+                  <li>No self-harm or dangerous instructions.</li>
+                  <li>Ensure content is respectful and safe for all users.</li>
+                </ul>
+                <hr />
+                <p className="mb-0">
+                  Please review your content before submission to ensure it
+                  aligns with the guidelines.
+                </p>
+              </div>
+            </>
           )}
+
           <AlertDialogFooter>
             <AlertDialogCancel onClick={() => setOpen(false)}>
               Cancel

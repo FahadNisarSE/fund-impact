@@ -1,4 +1,4 @@
-import { InferInsertModel, and, count, desc, eq, ne } from "drizzle-orm";
+import { InferInsertModel, and, count, desc, eq, ne, sql } from "drizzle-orm";
 
 import { db } from "@/../../db/db";
 import { comments, likes, projects, support, users } from "@/../../db/schema";
@@ -10,14 +10,32 @@ export async function createProjectModel(
 }
 
 export async function getProjectById(projectId: string) {
-  const _projects = await db
+  const projectsArray = await db
     .select()
     .from(projects)
     .where(eq(projects.projectId, projectId));
 
-  if (_projects.length) return _projects[0];
+  if (!projectsArray.length) {
+    return null;
+  }
 
-  return null;
+  const project = projectsArray[0];
+  const PROJECTID = project.projectId as string;
+
+  const totalSupport = await db
+    .select({
+      totalAmount: sql`SUM(${support.amount})`.as("totalAmount"),
+    })
+    .from(support)
+    .where(and(eq(support.projectId, PROJECTID), eq(support.verified, true)));
+
+  const totalAmount = totalSupport[0]?.totalAmount ?? 0;
+  const currentAmount = Number(totalAmount) + Number(project.currentAmout ?? 0);
+
+  return {
+    ...project,
+    currentAmout: currentAmount,
+  };
 }
 
 export async function getLatestProject(limit: number) {

@@ -5,11 +5,12 @@ import { FaCreditCard } from "react-icons/fa";
 import { FaUser, FaUserGroup } from "react-icons/fa6";
 import { MdModeEdit } from "react-icons/md";
 import { redirect } from "next/navigation";
+import { FaUsers } from "react-icons/fa";
 
 import { auth } from "@/../auth";
 import getUserByEmailAction from "@/action/user/getUserByEmailAction";
 import Error from "@/components/Error";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import styles from "@/constant/style";
 import UsersProjects from "@/components/Profile/UsersProject";
 
@@ -94,10 +95,11 @@ export default async function Profile() {
                   </div>
                 </>
               ) : (
-                // If the user is not a "Creator", show a different statistic (support count)
                 <div className="flex-row items-center flex gap-x-2">
                   <FaCreditCard />
-                  <span>Supported {statisticsSupporter ?? 0} Projects</span>
+                  <Link href={"/profile/supported"}>
+                    Supported {statisticsSupporter ?? 0} Projects
+                  </Link>
                 </div>
               )}
             </div>
@@ -118,18 +120,28 @@ export default async function Profile() {
           </Link>
         </Button>
         {user.userRole === "Creator" ? (
-          <Button size={"lg"}>
-            <Link
-              className="flex cursor-pointer flex-row items-center gap-x-2 "
-              href={"/support/paymentAccount"}
-            >
-              Payment Account <FaCreditCard className="text-lg" />
-            </Link>
-          </Button>
+          <>
+            <Button size={"lg"}>
+              <Link
+                className="flex cursor-pointer flex-row items-center gap-x-2 "
+                href={"/support/paymentAccount"}
+              >
+                Payment Account <FaCreditCard className="text-lg" />
+              </Link>
+            </Button>
+          </>
         ) : (
           <></>
         )}
+        <Link
+          href={"/profile/supported"}
+          className={buttonVariants({ size: "lg" })}
+        >
+          My Supports
+          <FaUsers className="ml-4 text-lg" />
+        </Link>
       </section>
+
       <section className="max-w-2xl mx-auto flex flex-col items-center gap-y-4 my-10 p-4">
         <h3 className="text-xl text-center font-semibold text-foreground">
           About You

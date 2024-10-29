@@ -1,6 +1,6 @@
 import { getProjectById } from "@/model/project";
 
-export const revalidate = 60;
+export const revalidate = 10;
 
 const isValidUUID = (id: string) => {
   const regex =

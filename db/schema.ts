@@ -159,6 +159,20 @@ export const likes = pgTable("likes", {
     .$onUpdateFn(() => new Date()),
 });
 
+export const chatChannel = pgTable("chatChannel", {
+  channelId: text("channel_id").notNull().primaryKey(),
+  userId1: text("userId1")
+    .notNull()
+    .references(() => users.id),
+  userId2: text("userId2")
+    .notNull()
+    .references(() => users.id),
+  createdAt: timestamp("create_at").defaultNow(),
+  updatedAt: timestamp("updated_at")
+    .defaultNow()
+    .$onUpdateFn(() => new Date()),
+});
+
 // Support Table
 export const support = pgTable("support", {
   stripeSessionId: text("stripe_session_id").notNull(),

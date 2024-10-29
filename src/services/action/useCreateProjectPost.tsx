@@ -1,6 +1,11 @@
 import { TPostClientSchema } from "@/schema/post.schema.client";
 import { useMutation } from "@tanstack/react-query";
 import { posts } from "../../../db/types";
+import { Moderation } from "openai/resources/index.mjs";
+
+interface ModerationError extends Error {
+  moderationResults?: Moderation;
+}
 
 // Function to delete an image
 async function deleteImage(image: string) {
@@ -57,7 +62,14 @@ async function createNewProject(param: {
 
   if (!response.ok) {
     await deleteImage(imageUrl);
-    throw new Error(postResponse.message || "Post creation failed.");
+    const error: ModerationError = new Error(
+      postResponse.message || "Project creation failed"
+    );
+    if (postResponse.code === 422) {
+      error.name = "MODERATION";
+      error.moderationResults = postResponse.data;
+    }
+    throw error;
   }
 
   return postResponse.data as posts;

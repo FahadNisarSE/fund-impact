@@ -35,6 +35,7 @@ export const signUp = async (values: TUserSignUpSchema) => {
     })
     .returning();
 
+
   const verificationToken = await generateVerificationToken(user[0].id, email);
   if (verificationToken)
     await sendVerificationEmail(

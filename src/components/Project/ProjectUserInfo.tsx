@@ -1,7 +1,14 @@
-import Image from "next/image";
-import { IoIosWarning } from "react-icons/io";
+"use client";
 
+import Image from "next/image";
+import { FaDonate } from "react-icons/fa";
+import { IoIosWarning } from "react-icons/io";
+import { IoChatbox } from "react-icons/io5";
+
+import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { project, user } from "../../../db/types";
+import { buttonVariants } from "../ui/button";
 import ProjectSupport from "./ProjectSupport";
 
 export default function ProjectUserInfo({
@@ -13,6 +20,7 @@ export default function ProjectUserInfo({
   user: user | null;
   project: project;
 }) {
+  const session = useSession();
   if (!user) {
     return (
       <div className="flex items-center gap-4 text-destructive">
@@ -38,6 +46,27 @@ export default function ProjectUserInfo({
           {project.createdAt && new Date(project.createdAt).toDateString()}
         </p>
       </div>
+
+      {session && session.data?.user?.id === userId && (
+        <Link
+          href={`/profile/supporters/${project.projectId}`}
+          className={buttonVariants({ variant: "outline" })}
+        >
+          Supporters
+          <FaDonate className="w-4 h-4 ml-4" />
+        </Link>
+      )}
+
+      {session && session.data?.user?.id !== userId && (
+        <Link
+          href={`/chat?channelId=${userId}&&username=${user.name}`}
+          className={buttonVariants({ variant: "outline" })}
+        >
+          Chat
+          <IoChatbox className="w-4 h-4 ml-4" />
+        </Link>
+      )}
+
       <ProjectSupport projectId={project.projectId!} />
     </div>
   );
