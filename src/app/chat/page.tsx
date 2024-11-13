@@ -1,10 +1,10 @@
 "use client";
 
 import useCreateChannelId from "@/services/action/useCreateChannelId";
-import Image from "next/image";
 import { useGetStreamToken } from "@/services/query/useGetStreamToken";
 import { useSession } from "next-auth/react";
-import { useSearchParams } from "next/navigation";
+import Image from "next/image";
+import { redirect, useSearchParams } from "next/navigation";
 import { useEffect, useRef } from "react";
 import { DefaultGenerics, StreamChat } from "stream-chat";
 import {
@@ -20,6 +20,7 @@ import {
 import "stream-chat-react/dist/css/v2/index.css";
 
 const apiKey = "vhu2sga7ea4q";
+const chatClient = StreamChat.getInstance(apiKey);
 
 export default function ChatPage() {
   const session = useSession();
@@ -38,7 +39,6 @@ export default function ChatPage() {
     useCreateChannelId();
 
   useEffect(() => {
-    const chatClient = StreamChat.getInstance(apiKey);
     mutate(
       { userId, username: session?.data?.user.name ?? "" },
       {
@@ -46,8 +46,8 @@ export default function ChatPage() {
           console.log("Data: ", data);
           try {
             await chatClient.connectUser(
-              { id: userId },
-              data // token from server
+              { id: userId, name: session.data?.user.name ?? "" },
+              data
             );
             client.current = chatClient;
 
@@ -59,23 +59,44 @@ export default function ChatPage() {
                   username,
                 },
                 {
-                  onError: () => {},
+                  onError: (error) => {
+                    console.log("Create channel error: ", error);
+                  },
                   onSuccess: async (data) => {
+                    console.log("On success: ", data);
                     if (data) {
+                      console.log("reached inside ", { userId, channelId });
                       const channel = chatClient.channel(
                         "messaging",
-                        `chat-${channelId}`,
+                        channelId,
                         {
                           members: [userId, channelId], // Add both users as members
                         }
                       );
+                      console.log("creating channel,  ", channel);
 
-                      await channel.create();
+                      const response = await channel.create();
+
+                      console.log("Server response: ", response);
+
+                      console.log("after create");
+
+                      channel.sendMessage({
+                        text: "Hello",
+                      });
+
                       channel.watch();
+
+                      console.log("after watch");
                     }
                   },
                 }
               );
+            } else {
+              console.log("No channel name or username provided: ", {
+                channelId,
+                username,
+              });
             }
           } catch (error) {
             console.log("Api key, ", { error, apiKey });
@@ -92,6 +113,11 @@ export default function ChatPage() {
       if (chatClient) chatClient.disconnectUser();
     };
   }, [userId]);
+
+  if (!session.data?.user) {
+    redirect("/auth/signin");
+    return null;
+  }
 
   if (isPending || !client.current)
     return (
